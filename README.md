@@ -3,6 +3,8 @@ rmdup
 
 Remove Duplicated Files in a *really fast* way.
 
+[![.NET](https://github.com/anpho/rmdup/actions/workflows/dotnet.yml/badge.svg)](https://github.com/anpho/rmdup/actions/workflows/dotnet.yml)
+
 ## How to use
 
 ```
