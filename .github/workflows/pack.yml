@@ -30,25 +30,8 @@ jobs:
         md release_package
         copy bin\release\* release_package
         zip -r rmdup_${{github.ref}}.zip release_package
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+    - name: Release
+      uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/tags/')
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        body: |
-          Changes in this Release
-          - First Change
-          - Second Change
-        draft: true
-        prerelease: false
-    - name: Upload to Release
-      uses: actions/upload-release-asset@v4
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: rmdup_${{github.ref}}.zip
-        asset_name: rmdup_${{github.ref}}.zip
-        asset_content_type: application/zip
-        
+          files: rmdup_${{github.ref}}.zip
