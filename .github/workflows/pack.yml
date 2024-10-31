@@ -30,6 +30,7 @@ jobs:
         md release_package
         copy bin\release\* release_package
         compress-archive -Path release_package -DestinationPath  rmdup_${{github.ref_name}}.zip 
+      
     - name: Release
       uses: softprops/action-gh-release@v2
       if: startsWith(github.ref, 'refs/tags/')
