@@ -43,16 +43,20 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ github.sha }}
-        release_name: ${{ github.sha }}
+        release_name: release ${{ github.sha }}
+        body: |
+          ${{ github.sha }}
+          ${{ github.event.head_commit.message}}
         draft: true
         prerelease: false
 
     - name: publish to github
+      id: upload-release-asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: rmdup_${{github.sha}}.zip
+        asset_path: ./rmdup_${{github.sha}}.zip
         asset_name: rmdup_${{github.sha}}.zip
         asset_content_type: application/zip
