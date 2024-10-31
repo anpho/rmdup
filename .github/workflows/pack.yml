@@ -28,35 +28,12 @@ jobs:
     - name: Package as zip
       run: |
         compress-archive -Path release_package\* -DestinationPath  rmdup_${{github.sha}}.zip -CompressionLevel Fastest
-    - name : Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: rmdup_${{github.sha}}.zip
-        path: rmdup_${{github.sha}}.zip
-    
-
     - name: release to github
       id: create_release
-      if: startsWith(github.ref,'refs/tags/')
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v2
       with:
-        tag_name: ${{ github.sha }}
-        release_name: release ${{ github.sha }}
-        body: |
-          ${{ github.sha }}
-          ${{ github.event.head_commit.message}}
+        files: rmdup_${{github.sha}}.zip
         draft: true
-        prerelease: false
-
-    - name: publish to github
-      id: upload-release-asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./rmdup_${{github.sha}}.zip
-        asset_name: rmdup_${{github.sha}}.zip
-        asset_content_type: application/zip
+        
+        
+      
