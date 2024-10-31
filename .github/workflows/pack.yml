@@ -25,14 +25,16 @@ jobs:
       run: dotnet build --no-restore --configuration Release -o release_package
     - name: Test
       run: dotnet test --no-build --verbosity normal
-    - name: Package as zip
+    - name: Pack to zip
       run: |
-        compress-archive -Path release_package\* -DestinationPath  rmdup_${{github.sha}}.zip -CompressionLevel Fastest
+        compress-archive -Path release_package\* -DestinationPath  rmdup.zip -CompressionLevel Fastest
     - name: release to github
       id: create_release
       uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref,'refs/tags/')
       with:
-        files: rmdup_${{github.sha}}.zip
+        files: rmdup.zip
+        name: release ${{ github.sha}}
         draft: true
         
         
