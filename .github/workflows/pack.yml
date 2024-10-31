@@ -28,16 +28,32 @@ jobs:
     - name: Package as zip
       run: |
         md release_package
-        copy bin\release\* release_package
-        compress-archive -Path release_package -DestinationPath  rmdup_${{github.ref_name}}.zip 
+        copy .\bin\Release\net8.0\* .\release_package
+        compress-archive -Path .\release_package\*.* -DestinationPath  rmdup_${{github.sha}}.zip
     - name : Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: rmdup_${{github.ref_name}}.zip
-        path: rmdup_${{github.ref_name}}.zip
-
-    - name: Release
-      uses: softprops/action-gh-release@v2
-      if: startsWith(github.ref, 'refs/tags/')
+        name: rmdup_${{github.sha}}.zip
+        path: rmdup_${{github.sha}}.zip
+    
+    - name: release to github
+      id: create_release
+      if: startsWith(github.ref,'refs/tags/')
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-          files: rmdup_${{github.ref_name}}.zip
+        tag_name: ${{ github.sha }}
+        release_name: ${{ github.sha }}
+        draft: true
+        prerelease: false
+        
+    - name: publish to github
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: rmdup_${{github.sha}}.zip
+        asset_name: rmdup_${{github.sha}}.zip
+        asset_content_type: application/zip
